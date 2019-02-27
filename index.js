@@ -40,6 +40,54 @@ server.post('/api/hubs', (req, res) => {
     })
 });
 
+server.delete('/api/hubs/:id', (req, res) => {
+    const { id } = req.params;
+
+    db.hubs.remove(id)
+    .then(hub => {
+        if (hub) {
+            res.json(hub);
+        } else {
+            res.status(400).json({err: 'Invalid ID'});
+        }
+    }).catch(({code, message}) => {
+        res.status(code).json({err: message});
+    })
+});
+
+server.put('/api/hubs/:id', (req, res) => {
+    const { id } = req.params;
+    const updatedHub = req.body;
+
+    db.hubs.update(id, updatedHub)
+    .then(dbHub => {
+        if (dbHub) {
+            res.json(dbHub);
+        } else {
+            res.status(400).json({err: 'Inavild ID'});
+        }
+    }).catch(({code, message}) => {
+        res.status(code).json({err: message});
+    });
+});
+
+server.get('/api/hubs/:id', (req, res) => {
+    // get a specific hub by the id
+    // send an error message if the id is invalid
+    const { id } = req.params.id;
+
+    db.hubs.findById(id)
+    .then(hub => {
+        if (hub) {
+            res.json(hub);
+        } else {
+            res.status(400).json({err: 'Invalid ID'});
+        }
+    }).catch(({code, message}) => {
+        res.status(code).json({err: message});
+    })
+});
+
 // should be last in the codebase
 server.listen(PORT, () => {
   console.log(`Our Server is listenning on port ${PORT}`);
